@@ -1,0 +1,49 @@
+# 虚拟环境
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Python 编译文件
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+.Python
+
+# 包和依赖
+pip-wheel-metadata/
+*.egg-info/
+*.egg
+*.whl
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+
+# IDE 配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 测试覆盖率
+.coverage
+htmlcov/
+.pytest_cache/
+
+# 编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.log
+
+model_cache/
