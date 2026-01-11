@@ -53,13 +53,6 @@ python run.py
 
 # 5. 访问 http://localhost:5000
 
-# 使用Docker Compose一键部署
-docker-compose up -d
-
-# 或手动构建
-docker build -t smart-caption .
-docker run -p 5000:5000 smart-caption
-
 ```
 ```text
 项目结构
@@ -70,31 +63,43 @@ smart-caption/
 │   └── routes/            # 路由
 ├── static/                # 静态文件
 ├── config/                # 配置文件
-├── Dockerfile             # Docker配置
-├── docker-compose.yml     # Docker Compose配置
 ├── requirements.txt       # Python依赖
 └── run.py                # 应用入口
 ```
 
 
-## 部署到云平台**
-采用的是Heroku部署的方法，可以采用命令行部署或者是在Heroku网页部署的方法
-### **Heroku命令行部署**
+## 部署到云平台
+采用的是railway平台部署的方法，可以采用命令行部署的方法。
+```Procfile
+# 创建Procfile文件
+web: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 300 --preload run:app
+```
+### **railway命令行部署**
 ```bash
-# 1. 安装Heroku CLI
+
+# 1. 安装 Railway CLI
 # 2. 登录
-heroku login
+railway login
 
-# 3. 创建应用
-heroku create smart-caption-yourname
+# 3. 初始化项目
+railway init
+ 
 
-# 4. 设置环境变量
-heroku config:set MODEL_TYPE=simple
-heroku config:set SECRET_KEY=$(openssl rand -hex 32)
+# 4. 连接到现有项目或新建项目
+railway link 
 
 # 5. 部署
-git push heroku main
+railway up
 
-# 6. 打开应用
-heroku open
+# 6.设置环境变量
+railway variables set GENERATOR_TYPE simple
+# 也可以在网页中variable进行以下设置
+GENERATOR_TYPE=api
+AI_API_KEY=xxxx # 输入自己的api
+AI_API_BASE=https://api.deepseek.com  # 以DeepSeek为例
+AI_MODEL=deepseek-chat
+
+# 7. 打开应用
+railway open
+# 打开后在settings获取网页链接
 ```
