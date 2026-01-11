@@ -47,3 +47,14 @@ htmlcov/
 *.log
 
 model_cache/
+
+# static
+static/uploads/*.jpg
+static/uploads/*.jpeg
+static/uploads/*.png
+static/uploads/*.gif
+static/uploads/*.bmp
+static/uploads/*.webp
+static/uploads/*.svg
+static/uploads/*.tmp
+static/uploads/temp_*
