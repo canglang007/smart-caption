@@ -5,8 +5,7 @@ from PIL import Image
 import logging
 from ..models.vision_model import VisionModel
 from ..models.translator import Translator
-#from ..models.text_generator import TextGenerator
-# from ..models.simple_generator import SimpleTextGenerator
+from ..models.generator_manager import GeneratorManager  # 替换原来的导入
 logger = logging.getLogger(__name__)
 
 class CaptionService:
@@ -15,61 +14,15 @@ class CaptionService:
         初始化服务
         
         Args:
-            model_type: 模型类型 ('chatglm2', 'simple')
+            model_type: 模型类型 ('api', 'simple')
         """
-        logger.info(f"正在初始化文案生成服务，使用模型: {model_type}")
-        
-        # 初始化视觉模型
+        logger.info("初始化文案生成服务（双模式）...")
         self.vision_model = VisionModel()
-        
-        # 初始化翻译器
         self.translator = Translator()
-        
-        # 根据类型选择文本生成器
-        self.text_generator = self._init_text_generator(model_type)
-        
-        logger.info("文案生成服务初始化完成")
-    
-    def _init_text_generator(self, model_type):
-        """初始化文本生成器"""
-        if model_type == "chatglm2":
-            try:
-                from ..models.chatglm2_generator import ChatGLM2Generator
-                
-                # 尝试本地路径
-                local_paths = [
-                    r".\model_cache\chatglm2-6b-int4",  # 你的下载路径
-                    r".\model_cache\ZhipuAI\chatglm2-6b-int4",
-                ]
-                
-                model_path = None
-                for path in local_paths:
-                    if os.path.exists(path):
-                        model_path = path
-                        logger.info(f"使用本地模型: {model_path}")
-                        break
-                
-                if model_path:
-                    generator = ChatGLM2Generator(model_path=model_path)
-                else:
-                    logger.warning("未找到本地模型，尝试在线加载")
-                    generator = ChatGLM2Generator(model_path="ZhipuAI/chatglm2-6b-int4")
-                
-                logger.info("ChatGLM2 生成器初始化成功")
-                return generator
-                
-            except Exception as e:
-                logger.error(f"ChatGLM2 初始化失败: {e}")
-                logger.info("回退到 SimpleTextGenerator")
-                return self._init_text_generator("simple")        
-        else:  # simple
-            from ..models.simple_generator import SimpleTextGenerator
-            generator = SimpleTextGenerator()
-            logger.info("SimpleTextGenerator 初始化成功")
-            return generator
-        # self.text_generator = TextGenerator()
-        # self.text_generator = SimpleTextGenerator()  # 简单生成器
-        # self.text_generator = APIGenerator(api_key="your-key")  # API
+
+        self.generator_manager = GeneratorManager()
+        logger.info(f"服务初始化完成。当前模式：{self.generator_manager.get_current_mode()}")
+
 
     
     def process_image(self, image_path, styles=None):
@@ -101,7 +54,7 @@ class CaptionService:
             logger.info("Step 3: Generating style captions...")
             captions = {}
             for style in styles:
-                caption = self.text_generator.generate_caption(zh_caption, style)
+                caption = self.generator_manager.generate_caption(zh_caption, style)
                 captions[style] = caption
             
             result = {
